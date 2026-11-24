@@ -1,0 +1,10 @@
+{
+  "name": "tinytools-cli",
+  "version": "1.0.0",
+  "description": "50 piccoli strumenti da terminale, zero dipendenze, ognuno testato: testo, JSON/CSV, codifica, numeri/tempo, file.",
+  "bin": { "tt": "bin/tt.js" },
+  "scripts": { "test": "node --test \"test/*.test.js\"" },
+  "engines": { "node": ">=18" },
+  "license": "MIT",
+  "keywords": ["cli", "tools", "utilities", "json", "csv", "cron", "totp", "zero-dependencies"]
+}
