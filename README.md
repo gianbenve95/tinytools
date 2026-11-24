@@ -1,8 +1,8 @@
 # tinytools
 
-**100 piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (`tt`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
+**150 piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (`tt`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
 
-*100 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, dev helpers, files) behind one command, `tt`. Node 18+. MIT.*
+*150 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system) behind one command, `tt`. Node 18+. MIT.*
 
 ## Installazione
 
@@ -21,11 +21,13 @@ Il testo si passa come argomento, con `--file=percorso` oppure da stdin:
 tt slugify "Ciao Mondo! È bello"           # ciao-mondo-e-bello
 echo '{"a":{"b":[1,2]}}' | tt json-flatten
 tt calc "2*(3+4)^2 - sqrt(16)"             # 94
-tt number-to-words 1234567                 # un milione duecentotrentaquattromila...
+tt cidr 192.168.1.77/24
 tt cron-next "0 9 * * 1-5" --count=3
 tt semver satisfies 1.4.0 "^1.2.0"
+tt number-to-words 1234567
 tt easter 2026
-tt loan-payment 200000 3.5 30
+tt git-hot-files ~/progetti/app --top=5
+tt md-anchor-check --file=README.md
 tt dupfinder ~/Downloads --min=1MB
 tt bulk-rename ./foto --find="IMG_(\\d+)" --replace="vacanza-$1"   # anteprima; aggiungi --apply
 tt <tool> --help
@@ -181,18 +183,95 @@ tt <tool> --help
 | `trailing-ws` | Trova (o con --fix rimuove) gli spazi a fine riga | `tt trailing-ws <cartella> [--fix]` |
 | `bom-check` | Rileva il BOM UTF-8/UTF-16 nei file (--fix rimuove il BOM UTF-8) | `tt bom-check <cartella> [--fix]` |
 
+### Rete offline (IP, subnet, nomi)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `ip-info` | Classifica un indirizzo IPv4/IPv6 (privato, loopback, pubblico...) | `tt ip-info 192.168.1.10 \| ::1` |
+| `cidr` | Calcola rete, broadcast, maschera e host di un CIDR IPv4 | `tt cidr 192.168.1.0/24` |
+| `ip-to-int` | IPv4 <-> intero (e esadecimale) | `tt ip-to-int 192.168.1.1 \| 3232235777` |
+| `subnet-split` | Divide un CIDR in sottoreti più piccole (--prefix=26) | `tt subnet-split 10.0.0.0/24 --prefix=26` |
+| `mac-format` | Normalizza un indirizzo MAC (due punti, trattini, Cisco, compatto) | `tt mac-format aa-bb-cc-dd-ee-ff` |
+| `punycode` | Nomi di dominio internazionali: Unicode <-> punycode (xn--) | `tt punycode münchen.de \| xn--mnchen-3ya.de` |
+| `hostname-check` | Verifica un hostname secondo RFC 1123 e elenca i problemi | `tt hostname-check esempio.com` |
+| `email-validate` | Controllo sintattico di un indirizzo email (non verifica che esista) | `tt email-validate nome@esempio.it` |
+| `port-lookup` | Porte comuni: da numero a servizio e viceversa | `tt port-lookup 443 \| postgresql` |
+| `url-encode` | Codifica/decodifica percent-encoding (--decode, --full per URL interi) | `tt url-encode "a b&c" [--decode] [--full]` |
+
+### Markdown
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `md-links` | Estrae link e immagini da un Markdown (ignora i blocchi di codice) | `tt md-links --file=README.md` |
+| `md-headings` | Struttura dei titoli (livello, testo, riga) | `tt md-headings --file=README.md` |
+| `md-lint` | Controlli di stile: spazi finali, righe vuote doppie, salti di titolo, duplicati | `tt md-lint --file=README.md [--max=120]` |
+| `md-to-html` | Converte Markdown (sottoinsieme sicuro) in HTML | `tt md-to-html --file=README.md` |
+| `md-strip` | Rimuove la sintassi Markdown lasciando testo semplice | `tt md-strip --file=README.md` |
+| `md-tasks` | Avanzamento delle checklist - [ ] / - [x] e attività aperte | `tt md-tasks --file=TODO.md` |
+| `md-front-matter` | Legge il front matter YAML (sottoinsieme) e lo restituisce in JSON | `tt md-front-matter --file=post.md` |
+| `md-table-sort` | Ordina una tabella Markdown per colonna (--col=2 o nome, --desc, --numeric) | `tt md-table-sort --col=Nome [--desc] [--numeric] [--file=t.md]` |
+| `md-anchor-check` | Verifica che i link #ancora e i file relativi esistano | `tt md-anchor-check --file=README.md` |
+| `md-wordcount` | Conta parole escludendo codice e URL, con tempo di lettura | `tt md-wordcount --file=README.md [--wpm=200]` |
+
+### Git (sola lettura)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `git-authors` | Commit per autore | `tt git-authors [repo]` |
+| `git-activity` | Distribuzione dei commit per giorno della settimana e ora | `tt git-activity [repo]` |
+| `git-hot-files` | I file modificati più spesso (--top=10 --since="6 months ago") | `tt git-hot-files [repo] [--top=10] [--since=...]` |
+| `git-big-files` | I file più grandi in tutta la storia del repository | `tt git-big-files [repo] [--top=10]` |
+| `git-stale-branches` | Branch locali senza commit da N giorni (--days=90) | `tt git-stale-branches [repo] [--days=90] [--now=epoch]` |
+| `git-unpushed` | Commit locali non ancora inviati al remoto | `tt git-unpushed [repo]` |
+| `git-commit-lint` | Controlla gli ultimi commit (Conventional Commits, lunghezza, punto finale) | `tt git-commit-lint [repo] [--n=20]` |
+| `git-secrets-scan` | Cerca possibili segreti nei file tracciati (valori mascherati nell'output) | `tt git-secrets-scan [repo]` |
+| `git-first-commit` | Primo commit, età del progetto e numero di commit | `tt git-first-commit [repo] [--now=2026-01-01]` |
+| `git-streak` | Serie più lunga di giorni consecutivi con commit (e serie attuale) | `tt git-streak [repo] [--today=2026-03-10]` |
+
+### Web e grafica leggera
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `image-info` | Dimensioni e formato di immagini (PNG, JPEG, GIF, WebP, BMP, SVG) senza librerie | `tt image-info foto.png logo.svg ...` |
+| `data-uri` | File -> data URI base64 (o --decode per leggere una data URI, --out per salvarla) | `tt data-uri immagine.png \| "data:image/png;base64,..." --decode [--out=file]` |
+| `aspect-ratio` | Rapporto d'aspetto semplificato e ridimensionamento proporzionale | `tt aspect-ratio 1920 1080 [--width=800 \| --height=300]` |
+| `placeholder-svg` | Genera un'immagine segnaposto SVG (--text --bg --fg) | `tt placeholder-svg 300 200 [--text="Anteprima"] [--bg=#dddddd] [--fg=#555555]` |
+| `svg-minify` | Riduce un SVG: commenti, prologo, spazi tra i tag | `tt svg-minify --file=logo.svg` |
+| `css-minify` | Minimizza un CSS (commenti, spazi, ; finali) preservando le stringhe | `tt css-minify --file=style.css` |
+| `color-palette` | Armonie di colore da un colore base (complementare, analoga, triade...) | `tt color-palette "#3498db"` |
+| `gradient-css` | Genera un gradiente CSS (--angle=90, --type=radial) | `tt gradient-css #ff0000 #0000ff [#00ff00 ...] [--angle=90] [--type=linear\|radial]` |
+| `html-entities` | Codifica/decodifica entità HTML (--decode) | `tt html-entities "<b>è</b>" \| "&lt;b&gt;&egrave;" --decode` |
+| `meta-tags` | Genera i tag <meta> SEO, Open Graph e Twitter Card | `tt meta-tags --title="..." --description="..." [--url=] [--image=] [--site=]` |
+
+### Sistema locale
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `sys-info` | Sistema operativo, architettura, memoria, CPU e versione di Node | `tt sys-info ` |
+| `env-list` | Variabili d'ambiente con i valori sensibili mascherati (--filter=PATH, --show per svelarli) | `tt env-list [--filter=testo] [--show]` |
+| `path-doctor` | Controlla il PATH: cartelle inesistenti, duplicati, voci relative | `tt path-doctor ` |
+| `which-all` | Tutte le posizioni di un comando nel PATH (come which -a) | `tt which-all node` |
+| `disk-free` | Spazio totale, usato e libero di un volume | `tt disk-free [percorso]` |
+| `uptime` | Da quanto tempo è acceso il sistema (--seconds=N per formattare un valore) | `tt uptime [--seconds=93784]` |
+| `cpu-info` | Modello e core della CPU e carico medio (1/5/15 min) | `tt cpu-info ` |
+| `local-ips` | Indirizzi IP delle interfacce di rete locali (--all include loopback e IPv6) | `tt local-ips [--all]` |
+| `timezone-info` | Fuso orario, scostamento da UTC e ora legale (--tz=Europe/Rome --at=ISO) | `tt timezone-info [--tz=Europe/Rome] [--at=2026-07-01T00:00:00Z]` |
+| `locale-info` | Come una lingua formatta numeri, valute e date (--locale=it-IT) | `tt locale-info [--locale=it-IT] [--currency=EUR]` |
+
 ## Sicurezza e limiti
 
 - Nessun tool fa richieste di rete tranne `port-check` (connessione TCP all'host che indichi). Niente telemetria.
-- I file vengono modificati **solo** con un flag esplicito: `bulk-rename --apply`, `trailing-ws --fix`, `bom-check --fix`. Senza, mostrano soltanto cosa farebbero.
-- `calc` non usa `eval`: ha un parser proprio. `jwt-decode` **non verifica la firma**.
-- `password-gen` usa `crypto.randomInt`; `totp` è verificato con i vettori ufficiali RFC 6238; Pasqua e settimane ISO sono verificate su date note.
-- `loan-payment` e `compound-interest` sono calcoli indicativi, non consulenza finanziaria.
+- I file vengono modificati **solo** con un flag esplicito (`bulk-rename --apply`, `trailing-ws --fix`, `bom-check --fix`, `data-uri --out`...). Senza, mostrano soltanto cosa farebbero. I tool `git-*` sono di sola lettura.
+- `calc` non usa `eval`; `md-to-html` esegue l'escape dell'HTML e scarta i link `javascript:`. `jwt-decode` **non verifica la firma**.
+- `env-list` e `git-secrets-scan` mascherano i valori sensibili nell'output; `git-secrets-scan` dà solo indizi.
+- `password-gen` usa `crypto.randomInt`; `totp` è verificato con i vettori RFC 6238; Pasqua e settimane ISO su date note.
+- I calcoli finanziari sono indicativi, non consulenza.
 
 ## Test
 
 ```bash
-npm test     # 100 tool, test automatici (node:test), CI su macOS e Linux, Node 18/20/22
+npm test     # 150 tool, test automatici (node:test), CI su macOS e Linux, Node 18/20/22
 ```
 
-Contributi benvenuti: un tool = una voce in `src/<gruppo>.js` + un test. Licenza MIT.
+Contributi benvenuti: un tool = una voce in `src/<gruppo>.js` + un test. Dopo aver aggiunto un gruppo, aggiorna `scripts/gen-readme.js` e lancia `node scripts/gen-readme.js`.
+Licenza MIT.

@@ -1,0 +1,29 @@
+'use strict';
+const { test } = require('node:test'); const assert = require('node:assert');
+const fs = require('fs'), os = require('os'), path = require('path');
+const { call } = require('../src/core');
+const J = async (...x) => JSON.parse(await call(...x));
+const tmp = (name, c) => { const p = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'tt-web-')), name); fs.writeFileSync(p, c); return p; };
+const png = (w, h) => { const b = Buffer.alloc(33); Buffer.from('89504e470d0a1a0a', 'hex').copy(b); b.writeUInt32BE(13, 8); b.write('IHDR', 12); b.writeUInt32BE(w, 16); b.writeUInt32BE(h, 20); b[24] = 8; b[25] = 6; return b; };
+const jpg = (w, h) => Buffer.concat([Buffer.from([0xFF, 0xD8, 0xFF, 0xE0, 0, 4, 0, 0, 0xFF, 0xC0, 0, 11, 8, h >> 8, h & 255, w >> 8, w & 255, 1, 1, 0x11, 0])]);
+const gif = (w, h) => { const b = Buffer.alloc(10); b.write('GIF89a'); b.writeUInt16LE(w, 6); b.writeUInt16LE(h, 8); return b; };
+const webpX = (w, h) => { const b = Buffer.alloc(30); b.write('RIFF'); b.write('WEBP', 8); b.write('VP8X', 12); b.writeUIntLE(w - 1, 24, 3); b.writeUIntLE(h - 1, 27, 3); return b; };
+const bmp = (w, h) => { const b = Buffer.alloc(30); b.write('BM'); b.writeInt32LE(w, 18); b.writeInt32LE(-h, 22); return b; };
+
+test('image-info', async () => {
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), 'tt-img-')), w = (n, b) => { fs.writeFileSync(path.join(d, n), b); return path.join(d, n); };
+  const r = await J('image-info', [w('a.png', png(640, 480)), w('b.jpg', jpg(1280, 720)), w('c.gif', gif(32, 16)), w('d.webp', webpX(800, 600)), w('e.bmp', bmp(10, 20)), w('f.svg', '<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" width="100" height="50" viewBox="0 0 10 5"></svg>'), w('g.txt', 'ciao'), path.join(d, 'manca.png')]);
+  assert.deepStrictEqual(r.slice(0, 6).map(x => [x.format, x.width, x.height]), [['PNG', 640, 480], ['JPEG', 1280, 720], ['GIF', 32, 16], ['WebP', 800, 600], ['BMP', 10, 20], ['SVG', '100', '50']]); assert.strictEqual(r[0].colorType, 'RGBA'); assert.strictEqual(r[5].viewBox, '0 0 10 5'); assert.match(r[6].error, /non riconosciuto/); assert.strictEqual(r[7].error, 'non trovato'); await assert.rejects(call('image-info', []));
+});
+test('data-uri round trip', async () => {
+  const f = tmp('t.txt', 'ciao'), u = await call('data-uri', [f]); assert.strictEqual(u, 'data:text/plain;base64,Y2lhbw=='); assert.deepStrictEqual(await J('data-uri', [u], { decode: true }), { mime: 'text/plain', bytes: 4, base64: true });
+  const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'tt-o-')), 'o.txt'); await call('data-uri', [u], { decode: true, out }); assert.strictEqual(fs.readFileSync(out, 'utf8'), 'ciao'); assert.strictEqual((await J('data-uri', ['data:,a%20b'], { decode: true })).bytes, 3); await assert.rejects(call('data-uri', ['xx'], { decode: true })); await assert.rejects(call('data-uri', ['/nope']));
+});
+test('aspect-ratio', async () => { assert.deepStrictEqual(await J('aspect-ratio', ['1920', '1080'], { width: 800 }), { ratio: '16:9', decimal: 1.7778, resized: { width: 800, height: 450 } }); assert.deepStrictEqual((await J('aspect-ratio', ['1000', '500'], { height: 100 })).resized, { width: 200, height: 100 }); await assert.rejects(call('aspect-ratio', ['0', '5'])); });
+test('placeholder-svg', async () => { const s = await call('placeholder-svg', ['300', '200'], { text: 'A <b>&', bg: '#fff' }); assert.match(s, /width="300" height="200"/); assert.match(s, /fill="#fff"/); assert.match(s, />A &lt;b&gt;&amp;</); assert.match(await call('placeholder-svg', ['10', '10']), />10×10</); await assert.rejects(call('placeholder-svg', ['0', '5'])); await assert.rejects(call('placeholder-svg', ['5', '5'], { bg: 'rosso' })); });
+test('svg-minify', async () => { assert.strictEqual(await call('svg-minify', [], {}, '<?xml version="1.0"?>\n<!-- c -->\n<svg  xmlns="x">\n  <g>\n    <path d="M0 0" />\n  </g>\n</svg>\n'), '<svg xmlns="x"><g><path d="M0 0"/></g></svg>'); await assert.rejects(call('svg-minify', [], {}, '<p>no</p>')); });
+test('css-minify', async () => { assert.strictEqual(await call('css-minify', [], {}, '/* c */\na > b ,  .c {\n  color : red;\n  content: "a  ;  b";\n  width: calc(1px + 2px);\n}\n@media (min-width: 1px) { .d { margin: 0 auto; } }'), 'a>b,.c{color:red;content:"a  ;  b";width:calc(1px + 2px)}@media (min-width:1px){.d{margin:0 auto}}'); });
+test('color-palette', async () => { const p = await J('color-palette', ['#ff0000']); assert.strictEqual(p.complementary[0], '#00ffff'); assert.deepStrictEqual(p.triadic, ['#00ff00', '#0000ff']); assert.deepStrictEqual(p.tetradic, ['#80ff00', '#00ffff', '#8000ff']); assert.strictEqual(p.shades.length, 5); await assert.rejects(call('color-palette', ['blu'])); });
+test('gradient-css', async () => { assert.strictEqual(await call('gradient-css', ['#FF0000', '0000ff'], { angle: 45 }), 'background: linear-gradient(45deg, #ff0000, #0000ff);'); assert.match(await call('gradient-css', ['#fff', '#000'], { type: 'radial' }), /radial-gradient\(circle/); await assert.rejects(call('gradient-css', ['#fff'])); await assert.rejects(call('gradient-css', ['#fff', 'x'])); });
+test('html-entities', async () => { assert.strictEqual(await call('html-entities', ['<a href="x">&\'</a>']), '&lt;a href=&quot;x&quot;&gt;&amp;&#39;&lt;/a&gt;'); assert.strictEqual(await call('html-entities', ['&lt;b&gt;&egrave; &#233; &#x41; &boh;'], { decode: true }), '<b>è é A &boh;'); });
+test('meta-tags', async () => { const m = await call('meta-tags', [], { title: 'Ciao "mondo"', description: 'Desc', url: 'https://x.it', image: 'https://x.it/i.png' }); for (const s of ['<title>Ciao &quot;mondo&quot;</title>', 'og:image', 'summary_large_image', '<link rel="canonical" href="https://x.it">']) assert.ok(m.includes(s), s); assert.match(await call('meta-tags', [], { title: 'x'.repeat(61), description: 'd' }), /Titolo oltre 60/); await assert.rejects(call('meta-tags', [], { title: 'x' })); });

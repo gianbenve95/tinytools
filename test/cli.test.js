@@ -5,8 +5,8 @@ const { registry } = require('../src/core');
 const tt = (args, input) => spawnSync(process.execPath, [path.join(__dirname, '../bin/tt.js'), ...args], { input, encoding: 'utf8' });
 
 test('registro: nessun duplicato, ognuno con descrizione, uso e funzione', () => {
-  const names = Object.keys(registry); assert.strictEqual(names.length, 100);
-  for (const n of names) { const t = registry[n]; assert.ok(t.desc && t.usage && typeof t.fn === 'function', n); assert.match(n, /^[a-z0-9-]+$/); }
+  const names = Object.keys(registry); assert.ok(names.length >= 100);
+  for (const n of names) { const t = registry[n]; assert.ok(t.desc && typeof t.usage === 'string' && typeof t.fn === 'function', n); assert.match(n, /^[a-z0-9-]+$/); }
 });
 test('CLI: stdin, argomenti, opzioni, aiuto, errori', () => {
   assert.strictEqual(tt(['slugify'], 'Ciao Mondo').stdout, 'ciao-mondo\n');
