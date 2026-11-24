@@ -8,5 +8,10 @@
  "textplus": "Analisi e rifinitura del testo",
  "devtools2": "Sviluppo (licenze, cron, curl, Dockerfile, package.json)",
  "git2": "Git 2 (changelog, bus factor, cronologia)",
- "files3": "File 3 (confronti, ricerche, archivi, permessi)"
+ "files3": "File 3 (confronti, ricerche, archivi, permessi)",
+ "geo": "Geografia (distanze, coordinate, geohash, alba/tramonto)",
+ "dataformats": "Formati di dati (YAML, TOML, XML, INI, SQL...)",
+ "timetools": "Tempo (cron spiegato, ore, giorni lavorativi, luna)",
+ "secops": "Sicurezza pratica (certificati, JWT, SSH, header)",
+ "webtools": "Web (SEO, HTML, robots, sitemap, link puliti)"
 }

@@ -1,8 +1,8 @@
 # tinytools
 
-**250 piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (`tt`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, IBAN e codice fiscale, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
+**300 piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (`tt`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, IBAN e codice fiscale, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
 
-*250 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system, validators, crypto) behind one command, `tt`. Node 18+. MIT.*
+*300 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system, validators, crypto) behind one command, `tt`. Node 18+. MIT.*
 
 ## Installazione
 
@@ -408,6 +408,81 @@ tt <tool> --help
 | `symlink-check` | Trova collegamenti simbolici rotti (e mostra dove puntano) | `tt symlink-check <cartella>` |
 | `stale-files` | File non modificati da N giorni (--days=365), i più grandi per primi | `tt stale-files <cartella> [--days=365] [--top=20]` |
 
+### Geografia (distanze, coordinate, geohash, alba/tramonto)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `distance` | Distanza tra due punti (formula haversine) in km, miglia e miglia nautiche | `tt distance "41.9028,12.4964" "45.4642,9.1900"` |
+| `bearing` | Direzione iniziale (gradi e punto cardinale) da un punto a un altro | `tt bearing "41.9,12.5" "45.46,9.19"` |
+| `midpoint` | Punto medio geografico tra due coordinate | `tt midpoint "0,0" "0,90"` |
+| `geohash` | Geohash: codifica "lat,lon" (--precision=9) o decodifica una stringa (--decode) | `tt geohash "57.64911,10.40744" [--precision=9] \| u4pruydqq --decode` |
+| `bbox` | Rettangolo (bounding box) attorno a un punto dato il raggio in km | `tt bbox "45.46,9.19" --radius=10` |
+| `compass` | Gradi <-> punto cardinale a 16 direzioni (270 -> W, NE -> 45) | `tt compass 225 \| NNW` |
+| `dms-convert` | Gradi decimali <-> gradi/minuti/secondi (lat,lon o singolo valore) | `tt dms-convert "41.9028,12.4964" \| "41°54'10\"N"` |
+| `coord-parse` | Legge coordinate in vari formati (decimali, DMS, N41.9 E12.5) e le restituisce in decimali | `tt coord-parse "41°54'10\"N 12°29'46\"E" \| "N41.9028 E12.4964"` |
+| `route-length` | Lunghezza di un percorso: somma delle distanze tra punti "lat,lon" consecutivi (uno per riga) | `tt route-length [--file=punti.txt]` |
+| `sun-times` | Alba e tramonto (UTC e ora locale con --utc-offset=2) per un luogo e una data | `tt sun-times "41.9028,12.4964" [--date=2026-06-21] [--utc-offset=2]` |
+
+### Formati di dati (YAML, TOML, XML, INI, SQL...)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `yaml2json` | YAML (sottoinsieme: mappe, liste, scalari, blocchi | e >, flow) -> JSON | `tt yaml2json [--file=config.yml]` |
+| `json2yaml` | JSON -> YAML | `tt json2yaml [--file=x.json]` |
+| `ini2json` | File INI -> JSON (sezioni annidate, commenti ; e #, --types per numeri e booleani) | `tt ini2json [--file=config.ini] [--types]` |
+| `toml2json` | TOML (sottoinsieme: tabelle, array di tabelle, tipi base) -> JSON | `tt toml2json [--file=Cargo.toml]` |
+| `xml2json` | XML semplice -> JSON (attributi come "@nome", testo come "#text", tag ripetuti in array) | `tt xml2json [--file=dati.xml]` |
+| `json2xml` | JSON -> XML (chiavi "@attr" per gli attributi, "#text" per il testo; --root=nome) | `tt json2xml [--file=x.json] [--root=root]` |
+| `properties2json` | File .properties Java -> JSON (continuazioni di riga, \uXXXX, --nested per chiavi a.b.c) | `tt properties2json [--file=app.properties] [--nested]` |
+| `html-table2csv` | Estrae una tabella HTML in CSV (--index=1 per la prima, 2 per la seconda...) | `tt html-table2csv --file=pagina.html [--index=1]` |
+| `json2sql` | Array JSON di oggetti -> INSERT SQL con escape (--table, --dialect=postgres|mysql|sqlite) | `tt json2sql --table=utenti [--dialect=postgres] [--file=x.json]` |
+| `csv2sql` | CSV -> INSERT SQL (--table, --dialect, --types per riconoscere numeri e booleani) | `tt csv2sql --table=utenti [--dialect=mysql] [--types] [--file=x.csv] [--delim=;]` |
+
+### Tempo (cron spiegato, ore, giorni lavorativi, luna)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `cron-explain` | Spiega in italiano un'espressione cron a 5 campi | `tt cron-explain "30 9 * * 1-5"` |
+| `duration-sum` | Somma di durate ("1h30m", "45m", "2:15:00"): totale e ore decimali | `tt duration-sum 1h30m 45m 2:15:00  (o una per riga da stdin)` |
+| `timesheet` | Somma le ore da righe "[AAAA-MM-GG] HH:MM-HH:MM [note]" con pausa opzionale (--break=30 minuti al giorno) | `tt timesheet [--file=ore.txt] [--break=30]` |
+| `time-add` | Somma o sottrae una durata a un orario (--add=1h45m o --sub=30m), con cambio giorno | `tt time-add 09:30 --add=1h45m` |
+| `business-days` | Aggiunge N giorni lavorativi a una data (o li conta fino a --to), con --holidays-it per le festività italiane | `tt business-days 2026-04-01 --add=10 [--holidays-it] \| 2026-04-01 --to=2026-04-30` |
+| `date-range` | Elenca le date da A a B con passo (--step=1d|1w|1m, --weekdays per escludere i weekend) | `tt date-range 2026-03-01 2026-03-10 [--step=1d] [--weekdays]` |
+| `quarter` | Trimestre di una data: numero, inizio/fine, giorno dell'anno, giorni rimasti | `tt quarter 2026-05-17` |
+| `moon-phase` | Fase lunare di una data (età in giorni, illuminazione approssimata, nome) | `tt moon-phase 2026-03-10` |
+| `date-format` | Formatta una data con segnaposto (YYYY YY MMMM MMM MM M DDDD DDD DD D HH mm ss W Q), --lang=it|en | `tt date-format "2026-03-09T15:30:00Z" --format="DDDD D MMMM YYYY, HH:mm" [--lang=it]` |
+| `epoch-batch` | Converte molti timestamp Unix (secondi o millisecondi, uno per riga) in date ISO | `tt epoch-batch [--file=timestamps.txt]` |
+
+### Sicurezza pratica (certificati, JWT, SSH, header)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `cert-info` | Legge un certificato X.509 PEM: soggetto, emittente, validità, giorni residui, SAN, impronta | `tt cert-info --file=cert.pem [--now=2026-01-01T00:00:00Z]` |
+| `pem-info` | Elenca i blocchi PEM di un file (tipo, dimensione) senza mostrarne il contenuto; avvisa sulle chiavi private | `tt pem-info --file=bundle.pem` |
+| `ssh-fingerprint` | Impronta SHA256 (e MD5 legacy) di una chiave pubblica SSH (riga authorized_keys / .pub) | `tt ssh-fingerprint --file=id_ed25519.pub` |
+| `jwt-sign` | Crea un JWT firmato HS256/384/512 da un payload JSON (--secret, --alg, --exp=1h) | `tt jwt-sign '{"sub":"1"}' --secret=segreto [--alg=HS256] [--exp=1h]` |
+| `jwt-verify` | Verifica firma HS256/384/512 e scadenza di un JWT (--secret) | `tt jwt-verify <token> --secret=segreto` |
+| `scrypt-hash` | Hash di password con scrypt (formato scrypt$N$r$p$sale$hash) o verifica (--verify="..."); la password va via stdin o --file | `tt scrypt-hash (password via stdin) [--verify="scrypt$..."]` |
+| `csp-parse` | Analizza un header Content-Security-Policy e segnala impostazioni deboli | `tt csp-parse "default-src 'self'; script-src 'self' 'unsafe-inline'"` |
+| `security-headers` | Valuta gli header di sicurezza HTTP di una risposta (HSTS, CSP, nosniff, framing, referrer...) | `tt security-headers --file=header.txt   (es. output di curl -I)` |
+| `totp-verify` | Verifica un codice TOTP con tolleranza di ±N intervalli (--window=1) | `tt totp-verify <SEGRETO_BASE32> --code=123456 [--window=1] [--digits=6] [--period=30]` |
+| `keygen` | Genera una coppia di chiavi PEM (ed25519 o rsa --bits=3072) e le stampa: la chiave privata finisce a schermo, reindirizza su file! | `tt keygen [--type=ed25519\|rsa] [--bits=3072]  > chiavi.pem` |
+
+### Web (SEO, HTML, robots, sitemap, link puliti)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `seo-check` | Controlli SEO di base su un file HTML: title, description, h1, lang, canonical, Open Graph, alt delle immagini | `tt seo-check --file=pagina.html` |
+| `html-links` | Estrae i link <a href> con testo e tipo (interno/esterno/mailto/tel); --base per distinguere gli interni | `tt html-links --file=pagina.html [--base=https://miosito.it]` |
+| `html-headings` | Struttura dei titoli h1-h6 di una pagina HTML, con avvisi su h1 multipli e livelli saltati | `tt html-headings --file=pagina.html` |
+| `robots-check` | Verifica se un percorso è permesso da un robots.txt (regola più specifica, * e $; --agent=Googlebot) | `tt robots-check /privato/pagina.html --file=robots.txt [--agent=Googlebot]` |
+| `sitemap-urls` | Estrae gli URL (<loc>) e le date di modifica da una sitemap XML, riconosce gli indici di sitemap | `tt sitemap-urls --file=sitemap.xml` |
+| `utm-add` | Aggiunge parametri UTM a un URL (--source --medium --campaign [--term --content]) mantenendo query e # | `tt utm-add https://sito.it/p --source=newsletter --medium=email --campaign=marzo` |
+| `utm-strip` | Toglie i parametri di tracciamento (utm_*, fbclid, gclid, igshid...) dagli URL di un testo | `tt utm-strip "https://x.it/a?utm_source=y&id=3" \| --file=elenco.txt` |
+| `tweet-split` | Divide un testo lungo in un thread numerato (1/n) entro --limit caratteri (default 280), spezzando a frasi o parole | `tt tweet-split --file=testo.txt [--limit=280] [--no-numbers]` |
+| `hashtags` | Estrae hashtag e @menzioni con conteggi, oppure crea un hashtag da una frase (--make) | `tt hashtags --file=post.txt \| --make "Buon compleanno Anna"` |
+| `readme-badges` | Genera badge Markdown shields.io per README (--repo=utente/repo, --license, --node, --npm, --ci=workflow.yml); nessuna richiesta di rete | `tt readme-badges --repo=utente/repo [--license=MIT] [--node=18] [--npm=pacchetto] [--ci=test.yml]` |
+
 ## Sicurezza e limiti
 
 - Nessun tool fa richieste di rete tranne `port-check` (connessione TCP all'host che indichi). Niente telemetria.
@@ -420,7 +495,7 @@ tt <tool> --help
 ## Test
 
 ```bash
-npm test     # 250 tool, test automatici (node:test), CI su macOS e Linux, Node 18/20/22
+npm test     # 300 tool, test automatici (node:test), CI su macOS e Linux, Node 18/20/22
 ```
 
 Contributi benvenuti: un tool = una voce in `src/<gruppo>.js` + un test. Dopo aver aggiunto un gruppo, aggiorna `scripts/gen-readme.js` e lancia `node scripts/gen-readme.js`.
