@@ -1,8 +1,8 @@
 # tinytools
 
-**150 piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (`tt`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
+**200 piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (`tt`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, IBAN e codice fiscale, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
 
-*150 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system) behind one command, `tt`. Node 18+. MIT.*
+*200 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system, validators, crypto) behind one command, `tt`. Node 18+. MIT.*
 
 ## Installazione
 
@@ -258,6 +258,81 @@ tt <tool> --help
 | `timezone-info` | Fuso orario, scostamento da UTC e ora legale (--tz=Europe/Rome --at=ISO) | `tt timezone-info [--tz=Europe/Rome] [--at=2026-07-01T00:00:00Z]` |
 | `locale-info` | Come una lingua formatta numeri, valute e date (--locale=it-IT) | `tt locale-info [--locale=it-IT] [--currency=EUR]` |
 
+### CSV
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `csv-sort` | Ordina un CSV per colonna (--col=nome|n, --desc; numeri riconosciuti da soli) | `tt csv-sort --col=prezzo [--desc] [--file=x.csv] [--delim=;]` |
+| `csv-filter` | Filtra le righe: --where="prezzo>10 && nome~^A" (= != > >= < <= ~ ^= $= *=) | `tt csv-filter --where="eta>=18" [--file=x.csv]` |
+| `csv-select` | Tiene (e riordina) solo alcune colonne: --cols=nome,eta o --cols=2,1 | `tt csv-select --cols=nome,eta [--file=x.csv]` |
+| `csv-join` | Unisce due CSV su una colonna comune (--on=id, --left per mantenere tutte le righe del primo) | `tt csv-join a.csv b.csv --on=id [--left]` |
+| `csv-dedupe` | Rimuove righe duplicate (intere o per colonne: --by=email) | `tt csv-dedupe [--by=col1,col2] [--file=x.csv]` |
+| `csv-transpose` | Scambia righe e colonne | `tt csv-transpose [--file=x.csv]` |
+| `csv-head` | Prime o ultime N righe di dati, intestazione inclusa (--mode=head|tail) | `tt csv-head --n=5 [--mode=tail] [--file=x.csv]` |
+| `csv-validate` | Controlla struttura: colonne coerenti, intestazioni vuote o duplicate, righe vuote | `tt csv-validate [--file=x.csv]` |
+| `csv-merge` | Concatena più CSV con la stessa intestazione (unisce per nome di colonna) | `tt csv-merge a.csv b.csv [c.csv ...]` |
+| `csv-group` | Raggruppa per colonna con conteggio e somme/medie (--by=cat --agg=sum:prezzo,avg:qta) | `tt csv-group --by=categoria [--agg=sum:prezzo,avg:qta,min:x,max:x] [--file=x.csv]` |
+
+### JSON avanzato
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `json-merge` | Unisce più file JSON in profondità (--arrays=concat per concatenare gli array) | `tt json-merge a.json b.json [--arrays=concat]` |
+| `json-pick` | Tiene solo i percorsi indicati (--paths=a.b,c[0]) | `tt json-pick --paths=nome,indirizzo.citta [--file=x.json]` |
+| `json-omit` | Rimuove i percorsi indicati (--paths=a.b,c) | `tt json-omit --paths=password,utente.token [--file=x.json]` |
+| `json-fmt` | Formatta o comprime un JSON (--indent=4, --minify, --tabs) | `tt json-fmt [--indent=2 \| --minify \| --tabs] [--file=x.json]` |
+| `json-validate` | Valida un JSON con uno schema (type, properties, required, items, enum, min/max, pattern, anyOf...) | `tt json-validate dati.json --schema=schema.json` |
+| `json-stats` | Statistiche: profondità, tipi, numero di chiavi, array più lungo | `tt json-stats [--file=x.json]` |
+| `json-keys` | Elenca tutti i percorsi di chiave con il tipo (array come []) | `tt json-keys [--file=x.json]` |
+| `json-redact` | Maschera i valori di chiavi sensibili (password, token, api_key...) con *** | `tt json-redact [--keys=extra1,extra2] [--file=x.json]` |
+| `json-filter` | Filtra un array di oggetti: --where="eta>=18 && citta.nome~^R" (--path per array annidati) | `tt json-filter --where="prezzo>10" [--path=items] [--file=x.json]` |
+| `json-group` | Raggruppa un array per chiave con conteggio e somma opzionale (--by=cat --sum=prezzo) | `tt json-group --by=categoria [--sum=prezzo] [--path=items] [--file=x.json]` |
+
+### Validatori (IBAN, codice fiscale, P.IVA...)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `iban-validate` | Valida un IBAN (lunghezza per paese e checksum mod 97) | `tt iban-validate IT60X0542811101000000123456` |
+| `codice-fiscale` | Verifica il carattere di controllo di un codice fiscale e ne legge data di nascita e sesso | `tt codice-fiscale RSSMRA85T10A562S [--today=2026-03-10]` |
+| `partita-iva` | Verifica la cifra di controllo di una partita IVA italiana (11 cifre) | `tt partita-iva 12345678903` |
+| `luhn` | Algoritmo di Luhn: valida un numero di carta (e ne riconosce il circuito) o calcola la cifra finale (--complete) | `tt luhn 4111111111111111 \| 411111111111111 --complete` |
+| `isbn` | Valida ISBN-10/ISBN-13 e converte il 10 in 13 | `tt isbn 0306406152 \| 9780306406157` |
+| `ean` | Valida EAN-13/EAN-8/UPC-A o calcola la cifra di controllo (--complete) | `tt ean 4006381333931 \| 400638133393 --complete` |
+| `uuid-validate` | Valida un UUID e ne indica versione e variante | `tt uuid-validate 550e8400-e29b-41d4-a716-446655440000` |
+| `bic-validate` | Controllo formale di un codice BIC/SWIFT (8 o 11 caratteri) | `tt bic-validate DEUTDEFF500` |
+| `phone-it` | Normalizza un numero di telefono italiano in formato E.164 e ne indica il tipo | `tt phone-it "347 123 4567" \| "+39 06 1234 5678"` |
+| `password-strength` | Valuta una password: entropia stimata, schemi deboli e tempo di attacco offline (stime) | `tt password-strength "la-mia-password" (il testo resta sul tuo computer)` |
+
+### Righe di testo (grep, sed, cut, uniq...)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `grep-lite` | Filtra le righe con una regex (--invert, --ignore-case, --n numeri di riga, --count, --fixed) | `tt grep-lite "pattern" [--file=x] [--invert] [--ignore-case] [--n] [--count] [--fixed]` |
+| `replace` | Cerca e sostituisce (testo letterale; --regex per espressioni con $1, --ignore-case, --first) | `tt replace "vecchio" "nuovo" [--file=x] [--regex] [--ignore-case] [--first]` |
+| `number-lines` | Numera le righe (--start=1, --skip-empty, --sep=": ") | `tt number-lines [--file=x] [--start=1] [--sep=": "] [--skip-empty]` |
+| `cut-fields` | Estrae colonne (--f=1,3-4, --d="," ; senza --d divide sugli spazi) | `tt cut-fields --f=1,3 [--d=","] [--out-d=";"] [--file=x]` |
+| `uniq-count` | Righe uniche con il numero di occorrenze, dalla più frequente (--top, --ignore-case) | `tt uniq-count [--file=x] [--top=10] [--ignore-case]` |
+| `line-stats` | Statistiche sulle righe: totale, vuote, lunghezza minima/massima/media, duplicati | `tt line-stats [--file=x]` |
+| `trim-lines` | Pulisce le righe: spazi ai bordi, righe vuote multiple (--no-blank, --left, --right) | `tt trim-lines [--file=x] [--no-blank] [--left \| --right]` |
+| `add-affix` | Aggiunge prefisso e/o suffisso a ogni riga (\t e \n ammessi) | `tt add-affix --prefix="- " [--suffix=","] [--skip-empty] [--file=x]` |
+| `columns` | Allinea in colonne un testo separato da spazi o da un delimitatore (--d) | `tt columns [--d=","] [--gap=2] [--file=x]` |
+| `paste-columns` | Affianca due file riga per riga (--d="\t") | `tt paste-columns a.txt b.txt [--d=" \| "]` |
+
+### Codifiche e primitive crittografiche
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `hmac` | HMAC di un testo o file (--key o --key-file, --algo=sha256) | `tt hmac "messaggio" --key=segreto [--algo=sha256\|sha1\|sha512] [--format=hex\|base64]` |
+| `random-bytes` | Byte casuali crittograficamente sicuri (--n=16, --format=hex|base64|base64url) | `tt random-bytes [--n=16] [--format=hex]` |
+| `base32` | Base32 RFC 4648: codifica/decodifica (--decode, --no-pad) | `tt base32 "foobar" \| MZXW6YTBOI==== --decode` |
+| `base58` | Base58 (alfabeto Bitcoin): codifica/decodifica (--decode) | `tt base58 "Hello World!" \| 2NEpo7TZRRrLZSi2U --decode` |
+| `hex` | Testo <-> esadecimale (--decode, --sep=" ") | `tt hex "ciao" \| 6369616f --decode` |
+| `binary-text` | Testo <-> binario a gruppi di 8 bit (--decode) | `tt binary-text "Hi" \| "01001000 01101001" --decode` |
+| `crc32` | Checksum CRC-32 (o --algo=adler32) di un testo o file | `tt crc32 "testo" \| --file=x [--algo=adler32]` |
+| `ulid` | Genera ULID ordinabili per tempo (--count) o ne decodifica la data (--decode) | `tt ulid [--count=1] \| 01ARZ3NDEKTSV4RRFFQ69G5FAV --decode` |
+| `nanoid` | ID casuali URL-safe stile nanoid (--size=21, --alphabet, --count) | `tt nanoid [--size=21] [--count=1] [--alphabet=abc123]` |
+| `otp-uri` | Costruisce l'URI otpauth:// (per QR code di app 2FA) da segreto base32, account ed emittente | `tt otp-uri <SEGRETO_BASE32> --account=nome@esempio.it --issuer=MioSito [--digits=6] [--period=30]` |
+
 ## Sicurezza e limiti
 
 - Nessun tool fa richieste di rete tranne `port-check` (connessione TCP all'host che indichi). Niente telemetria.
@@ -270,7 +345,7 @@ tt <tool> --help
 ## Test
 
 ```bash
-npm test     # 150 tool, test automatici (node:test), CI su macOS e Linux, Node 18/20/22
+npm test     # 200 tool, test automatici (node:test), CI su macOS e Linux, Node 18/20/22
 ```
 
 Contributi benvenuti: un tool = una voce in `src/<gruppo>.js` + un test. Dopo aver aggiunto un gruppo, aggiorna `scripts/gen-readme.js` e lancia `node scripts/gen-readme.js`.

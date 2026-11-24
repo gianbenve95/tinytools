@@ -14,9 +14,9 @@ for (const g of Object.keys(names)) {
 const missing = [...new Set(Object.values(registry).map(t => t.group))].filter(g => !names[g]); if (missing.length) throw new Error('Gruppi senza nome nel README: ' + missing);
 const md = `# tinytools
 
-**${N} piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (\`tt\`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
+**${N} piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (\`tt\`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, IBAN e codice fiscale, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
 
-*${N} tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system) behind one command, \`tt\`. Node 18+. MIT.*
+*${N} tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system, validators, crypto) behind one command, \`tt\`. Node 18+. MIT.*
 
 ## Installazione
 

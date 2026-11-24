@@ -1,1 +1,7 @@
-{}
+{
+ "csv": "CSV",
+ "jsontools": "JSON avanzato",
+ "validators": "Validatori (IBAN, codice fiscale, P.IVA...)",
+ "lines": "Righe di testo (grep, sed, cut, uniq...)",
+ "crypto": "Codifiche e primitive crittografiche"
+}
