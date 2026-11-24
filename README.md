@@ -1,8 +1,8 @@
 # tinytools
 
-**200 piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (`tt`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, IBAN e codice fiscale, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
+**250 piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (`tt`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, IBAN e codice fiscale, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
 
-*200 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system, validators, crypto) behind one command, `tt`. Node 18+. MIT.*
+*250 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system, validators, crypto) behind one command, `tt`. Node 18+. MIT.*
 
 ## Installazione
 
@@ -333,6 +333,81 @@ tt <tool> --help
 | `nanoid` | ID casuali URL-safe stile nanoid (--size=21, --alphabet, --count) | `tt nanoid [--size=21] [--count=1] [--alphabet=abc123]` |
 | `otp-uri` | Costruisce l'URI otpauth:// (per QR code di app 2FA) da segreto base32, account ed emittente | `tt otp-uri <SEGRETO_BASE32> --account=nome@esempio.it --issuer=MioSito [--digits=6] [--period=30]` |
 
+### Calcoli pratici (download, energia, IVA, corsa...)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `download-time` | Tempo di download di un file data la velocità (es. 4.7GB a 100Mbps) | `tt download-time 4.7GB 100Mbps` |
+| `bitrate-size` | Dimensione di un video/audio dato bitrate e durata (es. 5Mbps per 2h) | `tt bitrate-size 5Mbps 2h30m` |
+| `power-cost` | Costo dell'energia di un apparecchio: watt, ore, prezzo €/kWh (--days per la stima mensile) | `tt power-cost 1500W 3h --price=0.28 [--days=30]` |
+| `fuel-economy` | Consumi: L/100km <-> km/l <-> mpg (US e UK) (--from=l100|kml|mpgus|mpguk) | `tt fuel-economy 6.5 [--from=l100]` |
+| `pace` | Passo di corsa: min/km <-> km/h, o da gara e tempo (+ previsioni Riegel) | `tt pace 5:30 \| --speed=12 \| --race=10k --time=50:00` |
+| `vat` | IVA: aggiunta al netto o scorporo dal lordo (--included), aliquota con --rate (default 22) | `tt vat 100 [--rate=22] [--included]` |
+| `discount` | Sconti successivi in percentuale: prezzo finale e sconto totale equivalente | `tt discount 100 20 10   (20% poi 10%)` |
+| `cooking-convert` | Conversioni di cucina: volumi (tazza, cucchiaio...) e grammi per ingredienti comuni | `tt cooking-convert 2 cup flour g \| 100 g sugar cup \| 3 tbsp ml` |
+| `bmi` | Indice di massa corporea da peso (kg) e altezza (cm) con classificazione OMS (solo informativo) | `tt bmi 70 175` |
+| `meeting-planner` | Orari di riunione compatibili tra più fusi (--date, --from=9 --to=18 ore lavorative locali) | `tt meeting-planner Europe/Rome America/New_York Asia/Tokyo [--date=2026-03-10] [--from=9] [--to=18]` |
+
+### Analisi e rifinitura del testo
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `readability` | Leggibilità: indice Gulpease (italiano) e Flesch Reading Ease (inglese) | `tt readability [--file=x.txt]` |
+| `levenshtein` | Distanza di Levenshtein tra due parole/testi e similarità % | `tt levenshtein kitten sitting` |
+| `text-similarity` | Somiglianza tra due testi (file o stringhe): Jaccard e coseno sulle parole | `tt text-similarity a.txt b.txt` |
+| `word-diff` | Differenze parola per parola tra due testi: [-tolto-]{+aggiunto+} | `tt word-diff vecchio.txt nuovo.txt` |
+| `keywords` | Parole chiave più frequenti senza le parole vuote (--lang=it|en, --top) | `tt keywords [--file=x.txt] [--lang=it] [--top=10]` |
+| `smart-quotes` | Virgolette tipografiche <-> dritte (--style=en|it|de, --reverse) | `tt smart-quotes "testo" [--style=it] [--reverse]` |
+| `title-case` | Maiuscole per titoli in inglese (articoli e preposizioni brevi in minuscolo) | `tt title-case "the lord of the rings"` |
+| `fix-mojibake` | Ripara testo rovinato dalla codifica sbagliata (es. PerchÃ© -> Perché) | `tt fix-mojibake "PerchÃ© Ã¨ cosÃ¬"` |
+| `unicode-info` | Per ogni carattere: code point, byte UTF-8, unità UTF-16 e categoria | `tt unicode-info "é€😀"` |
+| `ascii-box` | Disegna un riquadro attorno al testo (--style=single|double|round|ascii, --pad=1) | `tt ascii-box "Ciao mondo" [--style=round]` |
+
+### Sviluppo (licenze, cron, curl, Dockerfile, package.json)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `diff-stat` | Statistiche di un diff unificato: file, righe aggiunte e rimosse (da git diff o diff -u) | `tt diff-stat [--file=cambi.patch]  (git diff \| tt diff-stat)` |
+| `semver-sort` | Ordina un elenco di versioni semver (--desc), segnalando quelle non valide | `tt semver-sort 1.10.0 1.2.0 1.2.0-rc.1 [--desc]` |
+| `license-gen` | Testo di licenza pronto (mit, isc, bsd-2, unlicense) con anno e nome | `tt license-gen mit --name="Mario Rossi" [--year=2026]` |
+| `cron-build` | Frasi in italiano/inglese -> espressione cron (es. "ogni lunedì alle 9:30") | `tt cron-build "ogni giorno alle 9:30" \| "every weekday at 17:45" \| "ogni 15 minuti"` |
+| `curl-to-fetch` | Converte un comando curl semplice in codice JavaScript fetch (-X -H -d --json -u) | `tt curl-to-fetch "curl -X POST https://api.x.it -H 'Content-Type: application/json' -d '{\"a\":1}'"` |
+| `env-example` | Crea un .env.example da un .env: tiene chiavi e commenti, svuota i valori (--placeholder=changeme) | `tt env-example --file=.env [--placeholder=changeme] [--keep-safe]` |
+| `package-check` | Controlli rapidi su package.json: campi mancanti, versioni "*", duplicati, test di default | `tt package-check --file=package.json` |
+| `sort-package-json` | Riordina package.json con l'ordine standard dei campi e le dipendenze in ordine alfabetico | `tt sort-package-json --file=package.json` |
+| `dockerfile-lint` | Controlli rapidi su un Dockerfile: tag latest, ADD, apt-get, root, curl|sh | `tt dockerfile-lint --file=Dockerfile` |
+| `editorconfig-gen` | Genera un .editorconfig (--indent=space|tab, --size=2, --eol=lf|crlf, --max-line=100) | `tt editorconfig-gen [--indent=space] [--size=2] [--eol=lf] [--max-line=100]` |
+
+### Git 2 (changelog, bus factor, cronologia)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `git-changelog` | Changelog in Markdown dai commit Conventional Commits (--from=tag, --to=HEAD) | `tt git-changelog [repo] [--from=v1.0.0] [--to=HEAD]` |
+| `git-conflict-markers` | Cerca marcatori di conflitto dimenticati (<<<<<<<, =======, >>>>>>>) nei file tracciati | `tt git-conflict-markers [repo]` |
+| `git-large-commits` | I commit che toccano più file (--top=10) | `tt git-large-commits [repo] [--top=10]` |
+| `git-author-span` | Per ogni autore: primo e ultimo commit, giorni attivi, numero di commit | `tt git-author-span [repo]` |
+| `git-file-history` | Storia di un file (segue i rinomini): commit, autori, prime/ultime date, ultimi 5 | `tt git-file-history percorso/file [--repo=.]` |
+| `git-tags` | Tag con data e numero di commit dal tag precedente | `tt git-tags [repo]` |
+| `git-commit-size` | Distribuzione della dimensione dei commit (file toccati) e medie | `tt git-commit-size [repo]` |
+| `git-bus-factor` | Bus factor: quanti autori coprono il 50% dei commit (totale e per cartella principale) | `tt git-bus-factor [repo]` |
+| `git-dir-churn` | Quanti commit toccano ogni cartella principale (dove si lavora di più) | `tt git-dir-churn [repo] [--since="3 months ago"]` |
+| `git-weekly` | Commit per settimana ISO con grafico a barre (--weeks=12) | `tt git-weekly [repo] [--weeks=12]` |
+
+### File 3 (confronti, ricerche, archivi, permessi)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `dir-diff` | Confronta due cartelle: solo in A, solo in B, contenuto diverso | `tt dir-diff cartellaA cartellaB` |
+| `find-files` | Cerca file per nome (glob), dimensione ed età (--name="*.log" --min=1MB --older-than=30d) | `tt find-files <cartella> [--name="*.js"] [--min=1KB] [--max=5MB] [--newer-than=7d] [--older-than=30d] [--type=f\|d]` |
+| `find-in-files` | Cerca un testo/regex nei file (--pattern, --glob="*.js", --ignore-case, --max=200) | `tt find-in-files <cartella> --pattern="TODO\|FIXME" [--glob="*.js"] [--ignore-case] [--max=200]` |
+| `zip-list` | Elenca il contenuto di un file ZIP senza estrarlo (dimensioni, metodo, data) | `tt zip-list archivio.zip` |
+| `tar-list` | Elenca il contenuto di un .tar o .tar.gz senza estrarlo | `tt tar-list archivio.tar \| archivio.tar.gz` |
+| `chmod-calc` | Permessi Unix: ottale <-> simbolico (755, rwxr-xr-x, u=rwx,g=rx,o=) con spiegazione | `tt chmod-calc 755 \| rwxr-x--- \| u=rwx,g=rx,o=` |
+| `duplicate-names` | Nomi di file che compaiono in più cartelle (utile per trovare copie sparse) | `tt duplicate-names <cartella> [--ignore=index.js,README.md]` |
+| `rename-case` | Cambia maiuscole/stile dei nomi (--to=lower|upper|kebab|snake|title): anteprima, --apply per eseguire | `tt rename-case <cartella> --to=kebab [--apply]` |
+| `symlink-check` | Trova collegamenti simbolici rotti (e mostra dove puntano) | `tt symlink-check <cartella>` |
+| `stale-files` | File non modificati da N giorni (--days=365), i più grandi per primi | `tt stale-files <cartella> [--days=365] [--top=20]` |
+
 ## Sicurezza e limiti
 
 - Nessun tool fa richieste di rete tranne `port-check` (connessione TCP all'host che indichi). Niente telemetria.
@@ -345,7 +420,7 @@ tt <tool> --help
 ## Test
 
 ```bash
-npm test     # 200 tool, test automatici (node:test), CI su macOS e Linux, Node 18/20/22
+npm test     # 250 tool, test automatici (node:test), CI su macOS e Linux, Node 18/20/22
 ```
 
 Contributi benvenuti: un tool = una voce in `src/<gruppo>.js` + un test. Dopo aver aggiunto un gruppo, aggiorna `scripts/gen-readme.js` e lancia `node scripts/gen-readme.js`.

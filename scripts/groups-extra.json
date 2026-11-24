@@ -3,5 +3,10 @@
  "jsontools": "JSON avanzato",
  "validators": "Validatori (IBAN, codice fiscale, P.IVA...)",
  "lines": "Righe di testo (grep, sed, cut, uniq...)",
- "crypto": "Codifiche e primitive crittografiche"
+ "crypto": "Codifiche e primitive crittografiche",
+ "practical": "Calcoli pratici (download, energia, IVA, corsa...)",
+ "textplus": "Analisi e rifinitura del testo",
+ "devtools2": "Sviluppo (licenze, cron, curl, Dockerfile, package.json)",
+ "git2": "Git 2 (changelog, bus factor, cronologia)",
+ "files3": "File 3 (confronti, ricerche, archivi, permessi)"
 }
