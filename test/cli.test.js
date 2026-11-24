@@ -4,8 +4,8 @@ const { spawnSync } = require('child_process'); const path = require('path');
 const { registry } = require('../src/core');
 const tt = (args, input) => spawnSync(process.execPath, [path.join(__dirname, '../bin/tt.js'), ...args], { input, encoding: 'utf8' });
 
-test('registro: 50 tool, ognuno con descrizione, uso e funzione', () => {
-  const names = Object.keys(registry); assert.strictEqual(names.length, 50);
+test('registro: nessun duplicato, ognuno con descrizione, uso e funzione', () => {
+  const names = Object.keys(registry); assert.strictEqual(names.length, 100);
   for (const n of names) { const t = registry[n]; assert.ok(t.desc && t.usage && typeof t.fn === 'function', n); assert.match(n, /^[a-z0-9-]+$/); }
 });
 test('CLI: stdin, argomenti, opzioni, aiuto, errori', () => {
