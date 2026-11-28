@@ -11,3 +11,6 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: "${{ matrix.node }}" }
       - run: npm test
+      - run: npm test
+        working-directory: regia
+        if: matrix.node != 18

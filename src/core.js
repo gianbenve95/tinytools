@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const GROUPS = ['text', 'data', 'encode', 'numbers', 'files', 'dev', 'words', 'math', 'dates', 'files2', 'net', 'markdown', 'git', 'web', 'system', 'csv', 'jsontools', 'validators', 'lines', 'crypto', 'practical', 'textplus', 'devtools2', 'git2', 'files3', 'geo', 'dataformats', 'timetools', 'secops', 'webtools'];
+const GROUPS = ['text', 'data', 'encode', 'numbers', 'files', 'dev', 'words', 'math', 'dates', 'files2', 'net', 'markdown', 'git', 'web', 'system', 'csv', 'jsontools', 'validators', 'lines', 'crypto', 'practical', 'textplus', 'devtools2', 'git2', 'files3', 'geo', 'dataformats', 'timetools', 'secops', 'webtools', 'a11y'];
 const registry = {};
 for (const g of GROUPS) {
   const mod = require('./' + g);
