@@ -490,7 +490,7 @@ tt <tool> --help
 | `a11y-check` | Controlli di accessibilità su un file HTML: alt, etichette, nomi di link e pulsanti, titoli, lang, zoom, id duplicati, tabindex, tabelle, iframe, ruoli ARIA | `tt a11y-check --file=pagina.html [--only=errore] [--json]` |
 | `page-glance` | Colpo d'occhio su una pagina: titolo, descrizione, titoli, immagini, link, script, peso, social, dati strutturati e problemi principali | `tt page-glance --file=pagina.html` |
 
-Sono controlli automatici del solo HTML: contrasto, tastiera e lettori di schermo vanno verificati a mano.
+Sono la versione gratuita: controlli automatici del solo HTML, in locale. Contrasto, tastiera e lettori di schermo vanno verificati a mano. Per la verifica completa di un sito (report, confronto con la verifica precedente, esportazione) c'è la versione a pagamento su [be-lead.org](https://be-lead.org).
 
 ## REGIA (cartella `regia/`)
 
