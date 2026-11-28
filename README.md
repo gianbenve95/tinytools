@@ -4,6 +4,8 @@
 
 *308 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system, validators, crypto) behind one command, `tt`. Node 18+. MIT.*
 
+*English version: [README.en.md](README.en.md).*
+
 ## Installazione
 
 ```bash
@@ -11,6 +13,7 @@ git clone https://github.com/gianbenve95/tinytools.git
 cd tinytools
 node bin/tt.js list          # elenco dei tool
 npm link                     # (opzionale) installa il comando "tt" globalmente
+source <(tt completion bash) # (opzionale) completamento con il tasto Tab (anche zsh)
 ```
 
 ## Uso
@@ -30,6 +33,8 @@ tt git-hot-files ~/progetti/app --top=5
 tt md-anchor-check --file=README.md
 tt dupfinder ~/Downloads --min=1MB
 tt bulk-rename ./foto --find="IMG_(\\d+)" --replace="vacanza-$1"   # anteprima; aggiungi --apply
+tt search json csv                         # cerca i tool per parola chiave
+tt --version
 tt <tool> --help
 ```
 
