@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const GROUPS = ['text', 'data', 'encode', 'numbers', 'files', 'dev', 'words', 'math', 'dates', 'files2', 'net', 'markdown', 'git', 'web', 'system', 'csv', 'jsontools', 'validators', 'lines', 'crypto', 'practical', 'textplus', 'devtools2', 'git2', 'files3', 'geo', 'dataformats', 'timetools', 'secops', 'webtools', 'a11y'];
+const GROUPS = ['text', 'data', 'encode', 'numbers', 'files', 'dev', 'words', 'math', 'dates', 'files2', 'net', 'markdown', 'git', 'web', 'system', 'csv', 'jsontools', 'validators', 'lines', 'crypto', 'practical', 'textplus', 'devtools2', 'git2', 'files3', 'geo', 'dataformats', 'timetools', 'secops', 'webtools', 'a11y', 'fun'];
 const registry = {};
 for (const g of GROUPS) {
   const mod = require('./' + g);
@@ -50,7 +50,7 @@ function list() {
   let s = '';
   for (const g of GROUPS) {
     s += `\n[${g}]\n`;
-    for (const [n, t] of Object.entries(registry)) if (t.group === g) s += `  ${n.padEnd(w)}  ${t.desc}\n`;
+    for (const [n, t] of Object.entries(registry)) if (t.group === g && !t.hidden) s += `  ${n.padEnd(w)}  ${t.desc}\n`;
   }
   return s;
 }

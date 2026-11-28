@@ -1,7 +1,7 @@
 {
   "name": "tinytools-cli",
   "version": "1.5.0",
-  "description": "302 piccoli strumenti da terminale, zero dipendenze, ognuno testato: testo, JSON/CSV, codifica, numeri, date, matematica, rete, Markdown, Git, web, sistema, CSV, JSON avanzato, validatori, righe di testo, crittografia.",
+  "description": "308 piccoli strumenti da terminale, zero dipendenze, ognuno testato: testo, JSON/CSV, codifica, numeri, date, matematica, rete, Markdown, Git, web, sistema, CSV, JSON avanzato, validatori, righe di testo, crittografia.",
   "bin": { "tt": "bin/tt.js" },
   "scripts": { "test": "node --test test/*.test.js" },
   "engines": { "node": ">=18" },
