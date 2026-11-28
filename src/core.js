@@ -55,8 +55,28 @@ function list() {
   return s;
 }
 
+const visible = () => Object.entries(registry).filter(([, t]) => !t.hidden);
+function search(term) {
+  const q = term.toLowerCase().split(/\s+/).filter(Boolean);
+  if (!q.length) throw new Error('Uso: tt search <parola> (es. tt search json)');
+  const hits = visible().map(([n, t]) => { const hay = (n + ' ' + t.desc).toLowerCase(); const score = q.reduce((x, w) => x + (n === w ? 6 : n.includes(w) ? 3 : hay.includes(w) ? 1 : -100), 0); return { n, t, score }; }).filter(h => h.score > 0).sort((a, b) => b.score - a.score || a.n.localeCompare(b.n));
+  if (!hits.length) return 'Nessun tool trovato per: ' + term;
+  const w = Math.max(...hits.map(h => h.n.length));
+  return hits.map(h => `${h.n.padEnd(w)}  ${h.t.desc}`).join('\n');
+}
+function completion(shell) {
+  const names = visible().map(([n]) => n).sort().join(' ');
+  if (shell === 'bash') return `_tt() { COMPREPLY=( $(compgen -W "list search completion ${names}" -- "\${COMP_WORDS[COMP_CWORD]}") ); }\ncomplete -F _tt tt`;
+  if (shell === 'zsh') return `#compdef tt\n_arguments '1:tool:(list search completion ${names})'`;
+  throw new Error('Uso: tt completion bash|zsh   (es. source <(tt completion bash))');
+}
+
 async function main(argv) {
   const [name, ...rest] = argv;
+  if (name === '--version' || name === '-v') { console.log(require('../package.json').version); return 0; }
+  if (name === 'search' || name === 'completion') {
+    try { console.log(name === 'search' ? search(rest.filter(a => !a.startsWith('--')).join(' ')) : completion(rest[0])); return 0; } catch (e) { console.error('Errore: ' + e.message); return 1; }
+  }
   if (!name || name === 'list' || name === '--help' || name === '-h') {
     console.log('Uso: tt <tool> [argomenti] [--opzioni]   (testo da argomenti, --file=percorso o stdin)\n' + list());
     return 0;
@@ -72,4 +92,4 @@ async function main(argv) {
   } catch (e) { console.error('Errore: ' + e.message); return 1; }
 }
 
-module.exports = { registry, call, main, list, parseArgs };
+module.exports = { registry, call, main, list, parseArgs, search, completion };
