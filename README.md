@@ -1,8 +1,8 @@
 # tinytools
 
-**300 piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (`tt`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, IBAN e codice fiscale, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
+**302 piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (`tt`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, IBAN e codice fiscale, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
 
-*300 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system, validators, crypto) behind one command, `tt`. Node 18+. MIT.*
+*302 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system, validators, crypto) behind one command, `tt`. Node 18+. MIT.*
 
 ## Installazione
 
@@ -483,6 +483,19 @@ tt <tool> --help
 | `hashtags` | Estrae hashtag e @menzioni con conteggi, oppure crea un hashtag da una frase (--make) | `tt hashtags --file=post.txt \| --make "Buon compleanno Anna"` |
 | `readme-badges` | Genera badge Markdown shields.io per README (--repo=utente/repo, --license, --node, --npm, --ci=workflow.yml); nessuna richiesta di rete | `tt readme-badges --repo=utente/repo [--license=MIT] [--node=18] [--npm=pacchetto] [--ci=test.yml]` |
 
+### Accessibilità e colpo d'occhio (HTML, analisi statica)
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `a11y-check` | Controlli di accessibilità su un file HTML: alt, etichette, nomi di link e pulsanti, titoli, lang, zoom, id duplicati, tabindex, tabelle, iframe, ruoli ARIA | `tt a11y-check --file=pagina.html [--only=errore] [--json]` |
+| `page-glance` | Colpo d'occhio su una pagina: titolo, descrizione, titoli, immagini, link, script, peso, social, dati strutturati e problemi principali | `tt page-glance --file=pagina.html` |
+
+Sono la versione gratuita: controlli automatici del solo HTML, in locale. Contrasto, tastiera e lettori di schermo vanno verificati a mano. Per la verifica completa di un sito (report, confronto con la verifica precedente, esportazione) c'è la versione a pagamento su [be-lead.org](https://be-lead.org).
+
+## REGIA (cartella `regia/`)
+
+Orchestratore multi-agente per Claude Code: guard che chiede il consenso prima di mail e pagamenti e blocca segreti e comandi distruttivi, agenti specializzati, router, memoria locale e delega a Ollama. Locale, senza dipendenze npm, Node 20+. Vedi `regia/README.md`.
+
 ## Sicurezza e limiti
 
 - Nessun tool fa richieste di rete tranne `port-check` (connessione TCP all'host che indichi). Niente telemetria.
@@ -495,7 +508,7 @@ tt <tool> --help
 ## Test
 
 ```bash
-npm test     # 300 tool, test automatici (node:test), CI su macOS e Linux, Node 18/20/22
+npm test     # 302 tool, test automatici (node:test), CI su macOS e Linux, Node 18/20/22
 ```
 
 Contributi benvenuti: un tool = una voce in `src/<gruppo>.js` + un test. Dopo aver aggiunto un gruppo, aggiorna `scripts/gen-readme.js` e lancia `node scripts/gen-readme.js`.

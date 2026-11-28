@@ -1,0 +1,86 @@
+{
+  "_nota": "Configurazione di REGIA. I valori mancanti prendono i default di hooks/lib/common.mjs. Le regole fisse del guard (mail, pagamenti, segreti, rm, push su main) sono nel codice e non si spengono da qui: qui si aggiungono solo liste e regole personali.",
+  "versione": 1,
+  "maxAgenti": 3,
+  "dataDir": null,
+  "ollama": {
+    "_nota": "Host di Ollama: uno o più, separati da virgola (es. i Mac di un cluster: \"http://host-a.local:11434, http://host-b.local:11434\"). Oppure la variabile REGIA_OLLAMA_URL. Gli host si interrogano in parallelo; vince il primo nell'ordine che ha il modello giusto. distribuzione \"giro\" alterna gli host con lo stesso modello. modello null = scelto da /api/tags su tutti gli host: prima un 4-14B (il più grande), qwen a parità, poi i più grandi.",
+    "url": "http://localhost:11434",
+    "distribuzione": "primo",
+    "timeoutMs": 2000,
+    "timeoutGenerazioneMs": 90000,
+    "modello": null,
+    "modelloEmbedding": null
+  },
+  "router": {
+    "usaOllama": true,
+    "maxRicordi": 4,
+    "maxCaratteri": 1500,
+    "lunghezzaMinima": 12,
+    "_regoleExtra": "Parole del tuo progetto: {\"agente\": \"postino\", \"tipo\": \"mail\", \"peso\": 4, \"regex\": \"\\\\b(casella|mailbox|posta)\\\\b\"}. Vengono prima di quelle di base.",
+    "regoleExtra": [],
+    "_agentiExtra": "Nomi degli agenti in più (es. postino, operatore-cluster), così anche Qwen li può scegliere.",
+    "agentiExtra": []
+  },
+  "costi": {
+    "_nota": "Avviso (mai blocco) quando una sessione supera questa soglia di token stimati.",
+    "sogliaAvvisoToken": 2000000
+  },
+  "postEdit": {
+    "_nota": "Dopo Write/Edit: scan segreti sempre; lint del file se il progetto ha eslint in node_modules; format con prettier e test del file vicino solo se li accendi qui.",
+    "lint": true,
+    "format": false,
+    "test": false,
+    "timeoutMs": 8000
+  },
+  "guard": {
+    "branchProtetti": ["main", "master"],
+    "curlShConsentiti": ["ollama.com", "sh.rustup.rs", "get.pnpm.io", "bun.sh"],
+    "cartelleTemporanee": ["/tmp", "/private/tmp", "/var/folders", "/private/var/folders"],
+    "_extra": "Regole personali: espressioni regolari sul comando Bash. extraAsk chiede, extraDeny blocca.",
+    "extraAsk": [],
+    "extraDeny": [],
+    "_mcpInterni": "Tool MCP con 'send' nel nome che parlano con le tue sessioni Claude, non con persone: niente richiesta di consenso.",
+    "mcpInterni": ["^mcp__claude-code-remote__(send_later|send_message)$"],
+    "_mcpAsk": "Tool MCP che consumano crediti o possono far partire mail senza 'send' nel nome.",
+    "mcpAsk": [
+      "^mcp__.*ElevenLabs__(creative_generate|creative_edit|creative_design_voice|creative_run_flow_nodes|creative_transcribe_audio|agents_generate|agents_create|agents_outbound_call|agents_submit_batch_call|agents_run_tests)",
+      "^mcp__.*Lovable__(create_project|remix_project|initiate_project|send_message|enable_database)",
+      "^mcp__.*Make__(scenarios_run|scenarios_replay|rpc_execute)",
+      "^mcp__.*Stripe__(atlas_company_formation|manage_stripe_accounts)",
+      "^mcp__.*Vercel__(create_sandboxes|create_storage_stores|create_drain|create_project$)",
+      "^mcp__.*Brevo__(sms_campaigns_create|automation_update_workflow_status)",
+      "^mcp__.*Microsoft_365__outlook_(set_vacation|respond_to_event)"
+    ]
+  },
+  "_preferenze": "Come l’utente vuole che si lavori: una riga all'inizio di ogni sessione.",
+  "preferenze": [
+    "Fai tutto da solo: esegui, verifica e correggi senza chiedere all’utente passaggi manuali.",
+    "Chiedi solo quando il guard lo richiede (mail, pagamenti, push su main) o se sei davvero bloccato, e allora proponi la soluzione già pronta.",
+    "Risposte schematiche (tabelle, checklist), in italiano, senza emoji né trattini lunghi."
+  ],
+  "progetti": {
+    "_nota": "Mappa progetti: il nome viene riconosciuto dal remote git (repo) o dal percorso. 'tipo' orienta il router.",
+    "mio-sito.it": {
+      "repo": "UTENTE/mio-sito",
+      "sito": "https://www.mio-sito.it",
+      "tipo": "sito",
+      "flusso": "GitHub + Vercel + Lovable"
+    },
+    "mio-sito-2.it": {
+      "repo": "UTENTE/mio-sito-2",
+      "sito": "https://mio-sito-2.it",
+      "tipo": "sito",
+      "flusso": "GitHub + Vercel"
+    },
+    "calcolo-esempio": {
+      "repo": "calcolo-esempio",
+      "tipo": "calcolo",
+      "norma": "UNI 11095"
+    },
+    "regia": {
+      "repo": "regia",
+      "tipo": "strumento"
+    }
+  }
+}
