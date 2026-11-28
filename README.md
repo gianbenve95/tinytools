@@ -1,8 +1,8 @@
 # tinytools
 
-**302 piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (`tt`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, IBAN e codice fiscale, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
+**308 piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (`tt`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, IBAN e codice fiscale, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
 
-*302 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system, validators, crypto) behind one command, `tt`. Node 18+. MIT.*
+*308 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system, validators, crypto) behind one command, `tt`. Node 18+. MIT.*
 
 ## Installazione
 
@@ -492,6 +492,19 @@ tt <tool> --help
 
 Sono la versione gratuita: controlli automatici del solo HTML, in locale. Contrasto, tastiera e lettori di schermo vanno verificati a mano. Per la verifica completa di un sito (report, confronto con la verifica precedente, esportazione) c'è la versione a pagamento su [be-lead.org](https://be-lead.org).
 
+### Curiosità e utilità leggere
+
+| Tool | Cosa fa | Esempio |
+|---|---|---|
+| `ascii-banner` | Scritta a grandi lettere in ASCII | `tt ascii-banner "ciao" [--char=#]` |
+| `cowsay` | Una mucca che dice il tuo testo | `tt cowsay "Ciao a tutti" [--width=40]` |
+| `fortune` | Un proverbio italiano a caso | `tt fortune [--seed=1]` |
+| `magic-8` | La palla magica 8: risposta sì/no | `tt magic-8 "Rilascio di venerdì?"` |
+| `passphrase` | Frase d'accesso con parole italiane casuali, con entropia stimata | `tt passphrase [--words=9] [--sep=-] [--cap]` |
+| `pomodoro` | Pianifica le sessioni Pomodoro con gli orari | `tt pomodoro --start=09:00 [--cycles=8]` |
+
+Alcuni comandi non compaiono in `tt list`. Buona caccia.
+
 ## REGIA (cartella `regia/`)
 
 Orchestratore multi-agente per Claude Code: guard che chiede il consenso prima di mail e pagamenti e blocca segreti e comandi distruttivi, agenti specializzati, router, memoria locale e delega a Ollama. Locale, senza dipendenze npm, Node 20+. Vedi `regia/README.md`.
@@ -508,7 +521,7 @@ Orchestratore multi-agente per Claude Code: guard che chiede il consenso prima d
 ## Test
 
 ```bash
-npm test     # 302 tool, test automatici (node:test), CI su macOS e Linux, Node 18/20/22
+npm test     # 308 tool, test automatici (node:test), CI su macOS e Linux, Node 18/20/22
 ```
 
 Contributi benvenuti: un tool = una voce in `src/<gruppo>.js` + un test. Dopo aver aggiunto un gruppo, aggiorna `scripts/gen-readme.js` e lancia `node scripts/gen-readme.js`.
