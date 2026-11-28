@@ -15,6 +15,8 @@ Contributions are welcome: new tools, bug fixes, translations and tests.
 4. Update the README table and the tool count (`test/cli.test.js`, `README.md`, `package.json`).
 5. Open a pull request describing what the tool does and one example.
 
+Please follow the [Code of Conduct](CODE_OF_CONDUCT.md) and add a line to `CHANGELOG.md`.
+
 The folder `regia/` has its own tests: `cd regia && npm test` (Node 20+).
 
 ## Contribuire (italiano)
