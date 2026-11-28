@@ -2,9 +2,44 @@
   "name": "tinytools-cli",
   "version": "1.6.0",
   "description": "308 piccoli strumenti da terminale, zero dipendenze, ognuno testato: testo, JSON/CSV, codifica, numeri, date, matematica, rete, Markdown, Git, web, sistema, CSV, JSON avanzato, validatori, righe di testo, crittografia.",
-  "bin": { "tt": "bin/tt.js" },
-  "scripts": { "test": "node --test test/*.test.js" },
-  "engines": { "node": ">=18" },
+  "homepage": "https://github.com/gianbenve95/tinytools#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gianbenve95/tinytools.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gianbenve95/tinytools/issues"
+  },
+  "author": "gianbenve95",
+  "bin": {
+    "tt": "bin/tt.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "license": "MIT",
-  "keywords": ["cli", "tools", "utilities", "json", "csv", "cron", "totp", "zero-dependencies"]
+  "keywords": [
+    "cli",
+    "tools",
+    "utilities",
+    "json",
+    "csv",
+    "cron",
+    "totp",
+    "zero-dependencies",
+    "accessibility",
+    "nodejs",
+    "developer-tools",
+    "italian"
+  ],
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ]
 }

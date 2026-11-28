@@ -1,5 +1,7 @@
 # tinytools
 
+[![test](https://github.com/gianbenve95/tinytools/actions/workflows/test.yml/badge.svg)](https://github.com/gianbenve95/tinytools/actions/workflows/test.yml) ![licenza MIT](https://img.shields.io/badge/licenza-MIT-green) ![zero dipendenze](https://img.shields.io/badge/dipendenze-0-brightgreen)
+
 **308 piccoli strumenti da terminale, senza dipendenze, ognuno con i suoi test.** Un solo comando (`tt`) per le piccole faccende di ogni giorno: slug, JSON/CSV, cron, TOTP, semver, subnet, IBAN e codice fiscale, Markdown, statistiche Git, numeri in lettere, mutui, Pasqua e festività italiane, duplicati, rinomina in blocco...
 
 *308 tiny zero-dependency CLI utilities (text, JSON/CSV, encoding, numbers, dates, math, networking, markdown, git, files, system, validators, crypto) behind one command, `tt`. Node 18+. MIT.*
